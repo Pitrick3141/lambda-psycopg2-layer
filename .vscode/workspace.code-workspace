@@ -1,0 +1,44 @@
+{
+  "folders": [
+    {
+      "name": "Psycopg Lambda Layer",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "/usr/local/bin/python",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
+    "files.exclude": {
+      "**/build": true,
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/aws-lambda-psycopg-layer": true
+    },
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "workbench.colorTheme": "Default Dark+",
+    "workbench.iconTheme": "vs-seti"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.pylint",
+      "ms-python.black-formatter",
+      "redhat.vscode-yaml",
+      "ms-vscode.makefile-tools",
+      "timonwong.shellcheck",
+      "ms-vscode.remote-containers"
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Quick Build & Test",
+        "dependsOrder": "sequence",
+        "dependsOn": ["Build Psycopg Layer", "Test Psycopg Layer"]
+      }
+    ]
+  }
+}

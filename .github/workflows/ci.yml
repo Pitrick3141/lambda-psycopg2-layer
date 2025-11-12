@@ -1,0 +1,96 @@
+name: Psycopg Lambda Layer CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build and Test Python ${{ matrix.python-version }}
+    permissions:
+      contents: read
+      actions: write
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc g++ make
+
+      - name: Build Psycopg layer
+        run: |
+          chmod +x scripts/*.sh
+          ./scripts/build.sh
+
+      - name: Test Psycopg layer
+        run: |
+          ./scripts/test.sh
+
+      - name: Upload layer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: psycopg-layer-python${{ matrix.python-version }}
+          path: build/psycopg-layer.zip
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      actions: read
+      id-token: write
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Download layer artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: psycopg-layer-python${{ matrix.python-version }}
+          path: layers/
+
+      - name: Create Release for Python ${{ matrix.python-version }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: python${{ matrix.python-version }}-v${{ github.run_number }}
+          name: Psycopg Layer Python ${{ matrix.python-version }} v${{ github.run_number }}
+          body: |
+            ## Psycopg Lambda Layer for Python ${{ matrix.python-version }}
+
+            This release contains a production-ready Psycopg layer for AWS Lambda with Python ${{ matrix.python-version }}.
+
+            ### Features
+            - Psycopg2-binary (latest)
+            - Python ${{ matrix.python-version }} support
+            - x86_64 architecture
+            - Optimized for Lambda runtime
+            - PostgreSQL database connectivity
+
+            ### Usage
+            Upload the `psycopg-layer.zip` file to AWS Lambda as a layer.
+
+            ### Layer Details
+            - **Runtime**: Python ${{ matrix.python-version }}
+            - **Architecture**: x86_64
+          files: layers/psycopg-layer.zip
+          draft: false
+          prerelease: false
