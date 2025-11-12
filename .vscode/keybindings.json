@@ -1,0 +1,35 @@
+{
+  "key": "ctrl+shift+b",
+  "command": "workbench.action.tasks.runTask",
+  "args": "Build Pillow Layer"
+},
+{
+  "key": "ctrl+shift+t",
+  "command": "workbench.action.tasks.runTask",
+  "args": "Test Pillow Layer"
+},
+{
+  "key": "ctrl+shift+m",
+  "command": "workbench.action.tasks.runTask",
+  "args": "Build Multi-Version"
+},
+{
+  "key": "ctrl+shift+n",
+  "command": "workbench.action.tasks.runTask",
+  "args": "Test Multi-Version"
+},
+{
+  "key": "ctrl+shift+c",
+  "command": "workbench.action.tasks.runTask",
+  "args": "Clean Build"
+},
+{
+  "key": "ctrl+shift+f",
+  "command": "workbench.action.tasks.runTask",
+  "args": "Format Python"
+},
+{
+  "key": "ctrl+shift+l",
+  "command": "workbench.action.tasks.runTask",
+  "args": "Lint Python"
+}
